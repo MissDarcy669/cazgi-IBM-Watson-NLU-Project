@@ -29,48 +29,85 @@ app.get("/",(req,res)=>{
     res.render('index.html');
   });
 
-app.get("/url/emotion", (req,res) => {
-const analyzeParams ={'url':req.query.url, 'features':{'entities':{'emotion':true, 'limit':1}}}
+app.get("/url/emotion", (req,res) => { 
+    
+    const analyzeParamsEmotion = {
+        'url': req.query.url,
+        'features': {
+            'emotion': {
+                'limit': 5
+            }
+        }
+    }
 
-const naturalLanguageUnderstanding=getNLUInstance();
+    getNLUInstance().analyze(analyzeParamsEmotion)
+    .then(analysisResults => {
+        console.log(JSON.stringify(analysisResults,null,2));
+        return res.send(analysisResults.result.emotion.document.emotion);
+    })
+    .catch(err => {
+        console.log('error', err);
+    });
 
-naturalLanguageUnderstanding.analyze(analyzeParams).then(analysisResults=>{console.log(analysisResults);
-console.log(JSON.stringify(analysisResults.result.entities[0].emotion,null,2)); return res.send(analysisResults.result.entities[0].emotion,null,2);//return res.send(analysisResults);
-}).catch(err=>{return res.send("Could not do desired operation "+err); });
-
+    //return res.send({"happy":"90","sad":"10"});
 });
 
 app.get("/url/sentiment", (req,res) => {
-const analyzeParams={'url':req.query.url, 'features':{'entities':{'sentiment':true, 'limit':1}}}
+    const analyzeParamsSentiment = {
+        'url': req.query.url,
+        'features': {
+            'sentiment': {
+            }
+        }
+    }
 
-const naturalLanguageUnderstanding=getNLUInstance();
-
-naturalLanguageUnderstanding.analyze(analyzeParams).then(analysisResults=>{console.log(analysisResults);
-console.log(JSON.stringify(analysisResults.result.entities[0].sentiment,null,2)); return res.send(analysisResults.result.entities[0].sentiment,null,2); //return res.send(analysisResults);
-}).catch(err=>{return res.send("url sentiment for "+req.query.url); });
-
+    getNLUInstance().analyze(analyzeParamsSEntiment)
+    .then(analysisResults => {
+        console.log(JSON.stringify(analysisResults,null,2));
+        return res.send(analysisResults.result.sentiment.document.label);
+    })
+    .catch(err => {
+        console.log('error', err);
+    });
 });
 
 app.get("/text/emotion", (req,res) => {
-    const analyzeParams={'url':req.query.url, 'features':{'entities':{'emotion':true, 'limit':1}}}
+    const analyzeParamsEmotion = {
+        'text': req.query.text,
+        'features': {
+            'emotion': {
+                'limit': 5
+            }
+        }
+    }
 
-    const naturalLanguageUnderstanding=getNLUInstance();
-
-    naturalLanguageUnderstanding.analyze(analyzeParams).then(analysisResults=>{console.log(analysisResults);
-    console.log(JSON.stringify(analysisResults.result.entities[0].emotion,null,2)); return res.send(analysisResults.result.entities[0].emotion,null,2); //return res.send(analysisResults);
-    }).catch(err=>{return res.send("Could not do desired operation "+err);})
-
+    getNLUInstance().analyze(anlayzeParamsEmotion)
+    .then(analysisResults => {
+        console.log(JSON.stringify(analysisResults,null,2));
+        return res.send(analysisResults.result.emotion.document.emotion);
+    })
+    .catch(err => {
+        console.log('error', err);
+    });
 });
 
 app.get("/text/sentiment", (req,res) => {
-    const analyzeParams={'url':req.query.url, 'features':{'entities':{'emotion':true, 'limit':1}}}
+    const analyzeParamsSentiment = {
+        'text': req.query.text,
+        'features': {
+            'sentiment': {
+            }
+        }
+    }
 
-    const naturalLanguageUnderstanding=getNLUInstance();
-
-    naturalLanguageUnderstanding.analyze(analyzeParams).then(analysisResults=>{console.log(analysisResults);
-    console.log(JSON.stringify(analysisResults.result.entities[0].sentiment,null,2)); return res.send(analysisResults.result.entities[0].sentiment,null,2); //return res.send(analysisResults);
-}).catch(err=>{return res.send("text sentiment for "+req.query.text); });
-
+    getNLUInstance().analyze(analyzeParamsSentiment)
+    .then(analysisResults => {
+        console.log(JSON.stringify(analysisResults,null,2));
+        return res.send(analysisResults.result.sentiment.document.label);
+    })
+    .catch(err => {
+        console.log('error', err);
+    });
 });
 
 let server = app.listen(8080, () => {
